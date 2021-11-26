@@ -40,7 +40,7 @@ export default defineCommand({
 
     const symbol = symbolsManager.get(symbolName, include, symbolType);
     if (!symbol) {
-      return interaction.followUp({
+      return interaction.reply({
         ephemeral: true,
         embeds: [buildErrorEmbed("Could not find results for your query")],
       });
