@@ -1,0 +1,31 @@
+{
+  "name": "sourcemod-docs-bot",
+  "author": "Sikari",
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "Documentation bot for SourceMod",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --files src/index.ts",
+    "start": "tsc && node dist/index.js",
+    "deploy:dev": "ts-node src/deploy/dev.ts",
+    "deploy:prod": "ts-node src/deploy/prod.ts"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "discord.js": "^13.3.1",
+    "dotenv": "^10.0.0",
+    "zod": "^3.11.6"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.14",
+    "@typescript-eslint/eslint-plugin": "^4.31.2",
+    "@typescript-eslint/parser": "^4.31.2",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
+    "ts-node": "^9.1.1",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.3"
+  }
+}

@@ -1,0 +1,14 @@
+version: "2.1"
+
+services:
+  discordbot:
+    build: "./"
+    container_name: sourcemod-docs-bot
+    volumes:
+      - "./data:/app/data"
+    environment:
+      BOT_TOKEN:
+      BOT_APP_ID:
+      BOT_OWNER_ID:
+      LOGGING_WEBHOOK_URL:
+    restart: unless-stopped
