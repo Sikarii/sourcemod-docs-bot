@@ -9,7 +9,7 @@ import { CommandInteraction, ApplicationCommandOptionData } from "discord.js";
 export class Command {
   public readonly name: string;
   public readonly description: string;
-  public permission: CommandPermission;
+  public readonly permission: CommandPermission;
   public readonly options: ApplicationCommandOptionData[];
   public readonly execute: (interaction: CommandInteraction) => any | Promise<any>;
 
