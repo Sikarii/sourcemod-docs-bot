@@ -1,3 +1,3 @@
 import { deploy } from "./index";
 
-deploy({ devOnly: false });
+deploy({ prodDeploy: true });

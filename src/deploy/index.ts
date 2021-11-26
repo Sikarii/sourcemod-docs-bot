@@ -5,13 +5,13 @@ import commandsManager from "../managers/commands";
 
 import { COMMANDS_DIRECTORY, DAPI_APPLICATIONS_URL } from "../constants";
 
-export const deploy = async ({ devOnly = true }) => {
+export const deploy = async ({ prodDeploy = false }) => {
   await commandsManager.loadFromDisk(COMMANDS_DIRECTORY);
 
   const commands = commandsManager.getAll();
   const appCommands = commands.map((c) => c.toApplicationCommand());
 
-  const routeSuffix = !devOnly ? "" : `/guilds/${config.devGuildId}`;
+  const routeSuffix = prodDeploy ? "" : `/guilds/${config.devGuildId}`;
   const absoluteUrl = `${DAPI_APPLICATIONS_URL}/${config.appId}${routeSuffix}/commands`;
 
   try {
