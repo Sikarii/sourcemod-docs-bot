@@ -8,6 +8,7 @@ import commandsManager from "./managers/commands";
 
 import { CommandPermission } from "./types/CommandPermission";
 
+import { debounce } from "./utils";
 import { buildErrorEmbed } from "./utils/embeds";
 
 import {
@@ -18,7 +19,6 @@ import {
 } from "./utils/symbols";
 
 import { COMMANDS_DIRECTORY } from "./constants";
-import { debounce } from "./utils";
 
 const client = new Client({
   intents: ["GUILDS", "GUILD_INTEGRATIONS"],
@@ -99,10 +99,6 @@ client.on("interactionCreate", (interaction) => {
   }
 });
 
-client.once("ready", () => {
-  console.log("Bot ready");
-});
-
 (async function() {
   await commandsManager.loadFromDisk(COMMANDS_DIRECTORY);
 
@@ -121,7 +117,8 @@ client.once("ready", () => {
 
   symbolsManager.on("mutation", setPresence);
 
-  client.on("ready", () => {
+  client.once("ready", () => {
+    console.log("Bot ready");
     symbolsManager.setFromManifestIncludes(includes);
   });
 
