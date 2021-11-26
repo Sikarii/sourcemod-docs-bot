@@ -4,7 +4,7 @@ import { Symbol, Identifier } from "../types/symbols";
 import { DocSymbol, ManifestIncludes, SectionKey, sectionKeyToTag } from "../types/DocSymbol";
 
 export class Symbols extends EventEmitter {
-  private symbols: DocSymbol[];
+  private readonly symbols: DocSymbol[];
 
   constructor() {
     super();
