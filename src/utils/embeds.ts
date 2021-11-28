@@ -71,7 +71,15 @@ export const buildSymbolEmbed = (symbol: DocSymbol) => {
     );
   }
 
-  lines.push(symbol.docs?.brief ?? "No description available");
+  if (symbol.tag === Identifier.TypeDefinition) {
+    lines.push(buildCodeBlock("c", symbol.type));
+  }
+
+  if (symbol.tag === Identifier.TypeSet) {
+    lines.push(...symbol.types.map((type) => buildCodeBlock("c", type.type)));
+  }
+
+  lines.push(symbol.docs?.brief ?? "No description available.");
 
   embed.setFooter(`Symbols provided and parsed from: ${SYMBOLS_SOURCE_URL}`);
   embed.setDescription(lines.join("\n"));
