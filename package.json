@@ -7,6 +7,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --files src/index.ts",
+    "build": "tsc",
     "start": "tsc && node dist/index.js",
     "deploy:dev": "ts-node src/deploy/dev.ts",
     "deploy:prod": "ts-node src/deploy/prod.ts"
