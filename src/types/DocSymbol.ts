@@ -1,5 +1,5 @@
 import { Symbol, Identifier } from "./sp-gid-typings";
-import { ManifestSectionKey } from "../datasources/manifest-bundle";
+import { ManifestBundleSectionKey } from "../datasources/manifest-bundle";
 
 export type DocSymbol = Symbol & {
   include: string;
@@ -17,13 +17,13 @@ export const SINGLETON_SECTIONS = {
   "typesets": Identifier.TypeSet,
 } as const;
 
-export type SingletonIdentifier = typeof SINGLETON_SECTIONS[ManifestSectionKey];
+export type SingletonIdentifier = typeof SINGLETON_SECTIONS[ManifestBundleSectionKey];
 
-export const isValidSection = (key: string): key is ManifestSectionKey => {
-  return SINGLETON_SECTIONS[key as ManifestSectionKey] !== undefined;
+export const isValidSection = (key: string): key is ManifestBundleSectionKey => {
+  return SINGLETON_SECTIONS[key as ManifestBundleSectionKey] !== undefined;
 };
 
-export const sectionKeyToTag = (key: ManifestSectionKey): SingletonIdentifier => {
+export const sectionKeyToTag = (key: ManifestBundleSectionKey): SingletonIdentifier => {
   return SINGLETON_SECTIONS[key];
 };
 

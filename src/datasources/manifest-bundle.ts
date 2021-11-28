@@ -10,7 +10,7 @@ interface VersionDetail {
   count: number;
 };
 
-export type ManifestSectionKey =
+export type ManifestBundleSectionKey =
   | "constants"
   | "defines"
   | "enums"
@@ -33,6 +33,7 @@ export interface ManifestBundleMeta {
   description: string;
 };
 
+// Fix type, merge and endpoints types
 export interface ManifestBundleSource {
   type: "git";
   merge: null;
@@ -48,8 +49,8 @@ export interface ManifestBundleSymbolDefinition {
 };
 
 export type ManifestBundleStrands = Record<string, ManifestBundleStrand>;
-export type ManifestBundleStrand = Record<ManifestSectionKey, ManifestBundleSymbolSection>;
-export type ManifestBundleSymbolSection = Record<string, ManifestBundleSymbolDefinition>;
+export type ManifestBundleStrand = Record<ManifestBundleSectionKey, ManifestBundleSection>;
+export type ManifestBundleSection = Record<string, ManifestBundleSymbolDefinition>;
 
 export const fetchManifestBundle = async (name: string): Promise<ManifestBundle> => {
   const bundleUrl = `${MANIFEST_REMOTE_BASE_URL}/${name}.bundle`;
