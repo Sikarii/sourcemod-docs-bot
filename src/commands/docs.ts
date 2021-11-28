@@ -1,10 +1,13 @@
 import { ApplicationCommandOptionTypes } from "discord.js/typings/enums";
 
-import symbolsManager from "../managers/symbols";
 import { CommandPermission } from "../types/CommandPermission";
 
-import { defineCommand } from "../utils";
-import { buildErrorEmbed } from "../utils/embeds";
+import {
+  defineCommand,
+  buildErrorEmbed
+} from "../utils";
+
+import symbolsManager from "../managers/symbols";
 
 export default defineCommand({
   description: "View documentation",

@@ -1,9 +1,12 @@
 import axios from "axios";
 
+import {
+  COMMANDS_DIRECTORY,
+  DAPI_APPLICATIONS_URL
+} from "../constants";
+
 import config from "../config";
 import commandsManager from "../managers/commands";
-
-import { COMMANDS_DIRECTORY, DAPI_APPLICATIONS_URL } from "../constants";
 
 export const deploy = async ({ prodDeploy = false }) => {
   await commandsManager.loadFromDisk(COMMANDS_DIRECTORY);

@@ -1,7 +1,9 @@
-import { Util, User, WebhookClient, MessageEmbed, ColorResolvable } from "discord.js";
+import { User, WebhookClient, MessageEmbed, ColorResolvable } from "discord.js";
 
 import config from "./config";
 import { Command } from "./managers/commands";
+
+import { buildCodeBlock } from "./utils";
 
 const typeColors: Record<string, ColorResolvable> = {
   "INFO": "BLURPLE",
@@ -84,7 +86,7 @@ export class Logger {
 
     if (opts.context) {
       const json = JSON.stringify(opts.context, null, 4);
-      embed.addField("Stack trace", this.codeBlock(json, "json"));
+      embed.addField("Stack trace", buildCodeBlock("json", json));
     }
 
     embed.setTimestamp(new Date());
@@ -101,11 +103,6 @@ export class Logger {
       stackTrace: error.stack?.split("\n").slice(0, 5),
     };
   }
-
-  private codeBlock(input: string, language: string) {
-    const clean = Util.escapeCodeBlock(input);
-    return `\`\`\`${language}\n${clean}\`\`\``;
-  };
 }
 
 export default new Logger();

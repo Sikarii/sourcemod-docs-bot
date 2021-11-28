@@ -1,24 +1,23 @@
 import { Client, CommandInteraction, AutocompleteInteraction } from "discord.js";
 
+import { CommandPermission } from "./types/CommandPermission";
+
+import {
+  debounce,
+  fetchManifest,
+  buildErrorEmbed,
+  getSymbolDisplay,
+  getSymbolFullName,
+  getSymbolsForQuery
+} from "./utils";
+
+import { COMMANDS_DIRECTORY } from "./constants";
+
 import config from "./config";
 import logger from "./logger";
 
 import symbolsManager from "./managers/symbols";
 import commandsManager from "./managers/commands";
-
-import { CommandPermission } from "./types/CommandPermission";
-
-import { debounce } from "./utils";
-import { buildErrorEmbed } from "./utils/embeds";
-
-import {
-  fetchManifest,
-  getSymbolDisplay,
-  getSymbolFullName,
-  getSymbolsForQuery
-} from "./utils/symbols";
-
-import { COMMANDS_DIRECTORY } from "./constants";
 
 const client = new Client({
   intents: ["GUILDS", "GUILD_INTEGRATIONS"],
