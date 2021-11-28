@@ -1,7 +1,14 @@
 import { EventEmitter } from "events";
 
-import { Symbol, Identifier } from "../types/symbols";
-import { DocSymbol, ManifestIncludes, SectionKey, sectionKeyToTag } from "../types/DocSymbol";
+import { Symbol, Identifier } from "../types/sp-gid-typings";
+
+import {
+  DocSymbol,
+  SectionKey,
+  sectionKeyToTag,
+  ManifestIncludes,
+  nestedToSingleton,
+} from "../types/DocSymbol";
 
 export class Symbols extends EventEmitter {
   private readonly symbols: DocSymbol[];
@@ -11,9 +18,9 @@ export class Symbols extends EventEmitter {
     this.symbols = [];
   }
 
-  get(name: string, include: string, tag: string) {
+  get(name: string, include: string, identifier: string) {
     return this.symbols.find((s) =>
-      s.name === name && s.realTag === tag && s.include === include
+      s.name === name && s.identifier === identifier && s.include === include
     );
   }
 
@@ -31,23 +38,27 @@ export class Symbols extends EventEmitter {
     return this.symbols.splice(0, this.symbols.length);
   }
 
-  register(name: string, include: string, symbol: Symbol, tag?: Identifier) {
+  register(name: string, include: string, symbol: Symbol, identifier?: Identifier) {
     const entry: DocSymbol = {
       ...symbol,
       name: name,
       include: include,
-      realTag: tag ?? symbol.tag,
+      identifier: identifier ?? symbol.tag,
     };
+
+    entry.tag = !identifier
+      ? symbol.tag
+      : nestedToSingleton(identifier) ?? symbol.tag;
 
     this.symbols.push(entry);
     this.emit("register", entry);
     this.emit("mutation", "add");
   }
 
-  registerNested(parent: DocSymbol, symbols: Symbol[], tag: Identifier) {
+  registerNested(parent: DocSymbol, symbols: Symbol[], identifier: Identifier) {
     symbols.forEach((symbol) => {
       const name = `${parent.name}.${symbol.name}`;
-      this.register(name, parent.include, symbol, tag);
+      this.register(name, parent.include, symbol, identifier);
     });
   }
 
@@ -69,7 +80,7 @@ export class Symbols extends EventEmitter {
           symbol.tag = tag;
           symbol.include = include;
 
-          this.register(symbol.name, symbol.include, symbol);
+          this.register(symbol.name, include, symbol);
 
           if (symbol.tag === Identifier.MethodMap) {
             this.registerNested(symbol, symbol.methods, Identifier.MethodMapMethod);

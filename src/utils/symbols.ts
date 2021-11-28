@@ -1,22 +1,27 @@
 import fs from "fs";
 import path from "path";
 
-import { fetchAsJson, readFileAsJson, removeIfExists } from "./index";
+import { Argument } from "../types/sp-gid-typings";
+import { DocSymbol, ManifestIncludes } from "../types/DocSymbol";
+
+import {
+  fetchAsJson,
+  readFileAsJson,
+  removeIfExists
+} from "./index";
 
 import {
   MANIFEST_DIRECTORY,
   MANIFEST_FILE_PATH,
-  MANIFEST_REMOTE_URL,
+  MANIFEST_REMOTE_URL
 } from "../constants";
 
-import { DocSymbol, ManifestIncludes } from "../types/DocSymbol";
-
 export const getSymbolDisplay = (s: DocSymbol) => {
-  return `${s.include} :: ${s.realTag} :: ${s.name}`;
+  return `${s.include} :: ${s.identifier} :: ${s.name}`;
 };
 
 export const getSymbolFullName = (s: DocSymbol) => {
-  return `${s.include}/${s.realTag}/${s.name}`;
+  return `${s.include}/${s.identifier}/${s.name}`;
 };
 
 export const getSymbolsForQuery = (query: string, allSymbols: DocSymbol[]) => {

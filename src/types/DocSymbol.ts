@@ -1,13 +1,11 @@
-import { Symbol as BaseSymbol, Identifier } from "./symbols";
-
-//export type DocSymbol = SingletonYield;
+import { Symbol, Identifier } from "./sp-gid-typings";
 
 export type IncludeSection = Record<SectionKey, DocSymbol[]>;
 export type ManifestIncludes = Record<string, IncludeSection>;
 
-export type DocSymbol = BaseSymbol & {
+export type DocSymbol = Symbol & {
   include: string;
-  realTag: Identifier;
+  identifier: Identifier;
 };
 
 export const SINGLETON_SECTIONS = {
@@ -26,4 +24,16 @@ export type SingletonIdentifier = typeof SINGLETON_SECTIONS[SectionKey];
 
 export const sectionKeyToTag = (key: string): SingletonIdentifier | undefined => {
   return SINGLETON_SECTIONS[key as any as SectionKey];
+};
+
+export const nestedToSingleton = (key: Identifier): SingletonIdentifier | undefined => {
+  const mapping = {
+    [Identifier.EnumStructField]: Identifier.Field,
+    [Identifier.EnumStructMethod]: Identifier.Function,
+    [Identifier.MethodMapMethod]: Identifier.Function,
+    [Identifier.MethodMapProperty]: Identifier.Property,
+  };
+
+  // TODO: Quite hacky
+  return (mapping as any)[key];
 };
