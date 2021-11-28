@@ -19,24 +19,6 @@ export const buildCodeBlock = (language: string, input: string) => {
   return `\`\`\`${language}\n${clean}\`\`\``;
 };
 
-export const capitalizeString = (str: string) => {
-  const [first, ...rest] = str;
-  return first.toUpperCase() + rest.join("");
-};
-
-export const fetchAsJson = async (url: string) => {
-  try {
-    const response = await axios.get(url);
-    if (response.status !== 200) {
-      return undefined;
-    }
-
-    return response.data;
-  } catch (e) {
-    return undefined;
-  }
-};
-
 export * from "./embeds";
 export * from "./symbols";
 export * from "./filesystem";

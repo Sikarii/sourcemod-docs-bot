@@ -1,14 +1,20 @@
+import fs from "fs";
+import path from "path";
 import { EventEmitter } from "events";
 
 import { Symbol, Identifier } from "../types/sp-gid-typings";
 
 import {
   DocSymbol,
-  SectionKey,
+  isValidSection,
   sectionKeyToTag,
-  ManifestIncludes,
   nestedToSingleton,
 } from "../types/DocSymbol";
+
+import { readFileAsJson } from "../utils";
+import { MANIFEST_DIRECTORY } from "../constants";
+
+import { fetchManifestBundle, ManifestBundle } from "../datasources/manifest-bundle";
 
 export class Symbols extends EventEmitter {
   private readonly symbols: DocSymbol[];
@@ -38,21 +44,21 @@ export class Symbols extends EventEmitter {
     return this.symbols.splice(0, this.symbols.length);
   }
 
-  register(name: string, include: string, symbol: Symbol, identifier?: Identifier) {
+  register(name: string, include: string, symbol: Symbol, identifier: Identifier) {
     const entry: DocSymbol = {
       ...symbol,
       name: name,
       include: include,
-      identifier: identifier ?? symbol.tag,
+      identifier: identifier,
     };
 
-    entry.tag = !identifier
-      ? symbol.tag
-      : nestedToSingleton(identifier) ?? symbol.tag;
+    entry.tag = nestedToSingleton(identifier);
 
     this.symbols.push(entry);
     this.emit("register", entry);
     this.emit("mutation", "add");
+
+    return entry;
   }
 
   registerNested(parent: DocSymbol, symbols: Symbol[], identifier: Identifier) {
@@ -62,41 +68,50 @@ export class Symbols extends EventEmitter {
     });
   }
 
-  setFromManifestIncludes(includes: ManifestIncludes) {
-    this.removeAll();
+  async loadFromManifestBundle(name: string) {
+    const bundlePath = path.join(MANIFEST_DIRECTORY, `${name}.bundle`);
 
-    for (const include in includes) {
-      const includeData = includes[include];
+    let bundle: ManifestBundle;
 
-      for (const section in includeData) {
-        const tag = sectionKeyToTag(section);
-        if (!tag) {
-          continue;
-        }
+    try {
+      bundle = await fetchManifestBundle(name);
 
-        const sectionSymbols = includeData[section as SectionKey];
+      await fs.promises.mkdir(MANIFEST_DIRECTORY, { recursive: true });
+      await fs.promises.writeFile(bundlePath, JSON.stringify(bundle));
 
-        for (const symbol of sectionSymbols) {
-          symbol.tag = tag;
-          symbol.include = include;
+    } catch (e) {
+      bundle = await readFileAsJson(bundlePath);
+      if (!bundle) {
+        throw new Error("Could not fetch bundle remotely and no local copy exists!");
+      }
+    }
 
-          this.register(symbol.name, include, symbol);
+    for (const include in bundle.strands) {
+      const strand = bundle.strands[include];
+      const sections = Object.keys(strand).filter(isValidSection);
 
-          if (symbol.tag === Identifier.MethodMap) {
-            this.registerNested(symbol, symbol.methods, Identifier.MethodMapMethod);
-            this.registerNested(symbol, symbol.properties, Identifier.MethodMapProperty);
+      for (const sectionKey of sections) {
+        const tag = sectionKeyToTag(sectionKey);
+
+        const section = strand[sectionKey];
+        const definitions = Object.values(section);
+
+        for (const definition of definitions) {
+          const parent = this.register(definition.symbol.name, include, definition.symbol, tag);
+
+          if (parent.tag === Identifier.MethodMap) {
+            this.registerNested(parent, parent.methods, Identifier.MethodMapMethod);
+            this.registerNested(parent, parent.properties, Identifier.MethodMapProperty);
           }
 
-          if (symbol.tag === Identifier.EnumStruct) {
-            this.registerNested(symbol, symbol.fields, Identifier.EnumStructField);
-            this.registerNested(symbol, symbol.methods, Identifier.EnumStructMethod);
+          if (parent.tag === Identifier.EnumStruct) {
+            this.registerNested(parent, parent.fields, Identifier.EnumStructField);
+            this.registerNested(parent, parent.methods, Identifier.EnumStructMethod);
           }
         }
       }
     }
-
-    return this.getCount();
-  };
+  }
 }
 
 export default new Symbols();

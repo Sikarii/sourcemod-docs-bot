@@ -4,7 +4,6 @@ import { CommandPermission } from "./types/CommandPermission";
 
 import {
   debounce,
-  fetchManifest,
   buildErrorEmbed,
   getSymbolDisplay,
   getSymbolFullName,
@@ -101,8 +100,6 @@ client.on("interactionCreate", (interaction) => {
 (async function() {
   await commandsManager.loadFromDisk(COMMANDS_DIRECTORY);
 
-  const includes = await fetchManifest(false);
-
   const setPresence = debounce(2000, () => {
     const count = symbolsManager.getCount();
 
@@ -116,9 +113,10 @@ client.on("interactionCreate", (interaction) => {
 
   symbolsManager.on("mutation", setPresence);
 
+  // TODO: Bot can start and not have symbols loaded
   client.once("ready", () => {
     console.log("Bot ready");
-    symbolsManager.setFromManifestIncludes(includes);
+    symbolsManager.loadFromManifestBundle("core");
   });
 
   await client.login(config.token);

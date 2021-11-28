@@ -3,8 +3,8 @@ import { MessageEmbed } from "discord.js";
 import { DocSymbol } from "../types/DocSymbol";
 import { Identifier } from "../types/sp-gid-typings";
 
+import { buildCodeBlock } from "./index";
 import { getArgumentDecl } from "./symbols";
-import { buildCodeBlock, capitalizeString } from "./index";
 
 import {
   AM_DOCS_URL,
@@ -35,13 +35,10 @@ export const buildSuccessEmbed = (message: string) => {
 export const buildSymbolEmbed = (symbol: DocSymbol) => {
   const embed = new MessageEmbed();
 
-  const prettyIdentifier = symbol.identifier
-    .split("_")
-    .map((w) => capitalizeString(w))
-    .join(" ");
+  const identifier = symbol.identifier.replaceAll("_", " ");
 
-  embed.setTitle(`${symbol.name} (${prettyIdentifier})`);
   embed.setColor("#5865F2");
+  embed.setTitle(`${symbol.name} (${identifier})`);
 
   const [parentName, childName = ""] = symbol.name.split(".");
   const [parentType, childType = ""] = symbol.identifier.split("_");

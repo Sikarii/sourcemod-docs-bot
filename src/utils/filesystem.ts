@@ -9,17 +9,6 @@ export const pathExists = async (path: string) => {
   }
 };
 
-export const removeIfExists = async (path: string) => {
-  const exists = await pathExists(path);
-  if (!exists) {
-    return;
-  }
-
-  return fs.promises.rm(path, {
-    recursive: true
-  });
-};
-
 export const readFileAsJson = async (file: string) => {
   const exists = await pathExists(file);
   if (!exists) {

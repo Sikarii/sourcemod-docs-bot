@@ -2,7 +2,7 @@
 
 A Discord bot that provides documentation hints for the SourceMod API.
 
-![Docs Command Image](https://i.imgur.com/MpLDMaT.png)
+![Docs Command Image](https://i.imgur.com/NkEqMpS.png)
 
 ## Deploying the bot
 
@@ -22,4 +22,4 @@ A Discord bot that provides documentation hints for the SourceMod API.
 
 ## Acknowledgments
 
-* [rumblefrog](https://github.com/rumblefrog) - Author of the sp-gid repository, used for the symbols in the bot.
+* [rumblefrog](https://github.com/rumblefrog) - Author of the [sourcemod-dev/manifest](https://github.com/sourcemod-dev/manifest) repository, used for the symbols in the bot.
