@@ -4,7 +4,8 @@ import { CommandPermission } from "../types/CommandPermission";
 
 import {
   defineCommand,
-  buildErrorEmbed
+  buildErrorEmbed,
+  buildSymbolEmbed
 } from "../utils";
 
 import symbolsManager from "../managers/symbols";
@@ -38,9 +39,6 @@ export default defineCommand({
     const symbolType = querySegments[0] ?? "";
     const symbolName = querySegments[1] ?? "";
 
-    const [parentName, childName = ""] = symbolName.split(".");
-    const [parentType, childType = ""] = symbolType.split("_");
-
     const symbol = symbolsManager.get(symbolName, include, symbolType);
     if (!symbol) {
       return interaction.reply({
@@ -49,35 +47,13 @@ export default defineCommand({
       });
     }
 
-    console.log({
-      query,
-      include,
-      symbolType,
-      parentType,
-      childType,
-      parentName,
-      childName
-    });
-
-    const desc = symbol.docs?.brief ?? "No description available.";
-
-    const amDocsLink = !childType || !childName
-      ? `https://sm.alliedmods.net/new-api/${include}/${parentName}`
-      : `https://sm.alliedmods.net/new-api/${include}/${parentName}/${childName}`;
-
-    const sourcemodDevLink = !childType || !childName
-      ? `https://sourcemod.dev/#/${include}/${parentType}.${parentName}`
-      : `https://sourcemod.dev/#/${include}/${parentType}.${parentName}/${childType}.${childName}`;
-
-    const name = symbol.name;
-    const message = `**${name}**\n[[AM Docs]](<${amDocsLink}>) [[Sourcemod.dev]](<${sourcemodDevLink}>)\n\n${desc}`;
-
-    const fullMessage = !target
-      ? message
-      : `Documentation suggestion for ${target.toString()}:\n${message}`;
+    const embed = buildSymbolEmbed(symbol);
 
     return interaction.reply({
-      content: fullMessage,
+      embeds: [embed],
+      content: !target
+        ? undefined :
+        `Documentation suggestion for ${target}:`
     });
   },
 });

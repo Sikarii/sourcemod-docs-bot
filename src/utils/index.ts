@@ -19,6 +19,11 @@ export const buildCodeBlock = (language: string, input: string) => {
   return `\`\`\`${language}\n${clean}\`\`\``;
 };
 
+export const capitalizeString = (str: string) => {
+  const [first, ...rest] = str;
+  return first.toUpperCase() + rest.join("");
+};
+
 export const fetchAsJson = async (url: string) => {
   try {
     const response = await axios.get(url);

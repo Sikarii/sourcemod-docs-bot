@@ -24,6 +24,12 @@ export const getSymbolFullName = (s: DocSymbol) => {
   return `${s.include}/${s.identifier}/${s.name}`;
 };
 
+export const getArgumentDecl = (arg: Argument) => {
+  return !arg.default
+    ? `${arg.decl}`
+    : `${arg.decl} = ${arg.default}`;
+};
+
 export const getSymbolsForQuery = (query: string, allSymbols: DocSymbol[]) => {
   const lowerQuery = query.toLowerCase();
 
