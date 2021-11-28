@@ -28,7 +28,7 @@ export default defineCommand({
       description: "User to mention",
     },
   ],
-  async execute(interaction) {
+  execute(interaction) {
     const query = interaction.options.getString("query", true);
     const target = interaction.options.getUser("target", false);
 
@@ -52,8 +52,8 @@ export default defineCommand({
     return interaction.reply({
       embeds: [embed],
       content: !target
-        ? undefined :
-        `Documentation suggestion for ${target}:`
+        ? undefined
+        : `Documentation suggestion for ${target}:`
     });
   },
 });
