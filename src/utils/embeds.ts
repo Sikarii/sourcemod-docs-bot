@@ -55,8 +55,8 @@ export const buildSymbolEmbed = (symbol: DocSymbol) => {
     : `${SM_DEV_DOCS_URL}/${symbol.include}/${parentType}.${parentName}/${childType}.${childName}`;
 
   const lines = [];
-  lines.push(`[AlliedModders Documentation](${amDocsLink})`);
-  lines.push(`[sourcemod.dev Documentation](${sourcemodDevLink})`);
+  lines.push(`[AlliedModders documentation](${amDocsLink})`);
+  lines.push(`[sourcemod.dev documentation](${sourcemodDevLink})`);
 
   // Add prototype if is a function
   if (symbol.tag === Identifier.Function) {
@@ -69,6 +69,7 @@ export const buildSymbolEmbed = (symbol: DocSymbol) => {
     );
   }
 
+  lines.push("");
   lines.push(symbol.docs?.brief ?? "No description available");
 
   embed.setFooter(`Symbols provided and parsed from: ${SYMBOLS_SOURCE_URL}`);
