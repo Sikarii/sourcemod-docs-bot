@@ -33,13 +33,15 @@ export interface ManifestBundleMeta {
   description: string;
 };
 
-// Fix type, merge and endpoints types
-export interface ManifestBundleSource {
+export type ManifestBundleSource = {
   type: "git";
-  merge: null;
-  repository: string;
-  endpoints: null;
   patterns: string[];
+  repository: string;
+} | {
+  type: "direct";
+  endpoints: string[];
+} & {
+  merge?: boolean;
 };
 
 export interface ManifestBundleSymbolDefinition {
