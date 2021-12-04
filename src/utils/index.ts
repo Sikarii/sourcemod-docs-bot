@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Util } from "discord.js";
 
 import { CommandDefinition } from "../types/CommandDefinition";

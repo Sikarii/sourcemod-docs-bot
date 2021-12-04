@@ -8,7 +8,7 @@ interface VersionDetail {
   hash: string;
   time: number;
   count: number;
-};
+}
 
 export type ManifestBundleSectionKey =
   | "constants"
@@ -25,13 +25,13 @@ export interface ManifestBundle {
   source: ManifestBundleSource;
   strands: ManifestBundleStrands;
   version: VersionDetail;
-};
+}
 
 export interface ManifestBundleMeta {
   name: string;
   author: string;
   description: string;
-};
+}
 
 export type ManifestBundleSource = {
   type: "git";
@@ -48,7 +48,7 @@ export interface ManifestBundleSymbolDefinition {
   symbol: Symbol;
   created: VersionDetail;
   last_updated: VersionDetail;
-};
+}
 
 export type ManifestBundleStrands = Record<string, ManifestBundleStrand>;
 export type ManifestBundleStrand = Record<ManifestBundleSectionKey, ManifestBundleSection>;
