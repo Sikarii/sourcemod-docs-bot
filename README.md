@@ -2,7 +2,10 @@
 
 A Discord bot that provides documentation hints for the SourceMod API.
 
-![Docs Command Image](https://i.imgur.com/NkEqMpS.png)
+<div align="center">
+  <img src="https://i.imgur.com/SANmyPp.png" width="450" height="450" />
+  <img src="https://i.imgur.com/4B9WHp5.png" width="450" height="450" />
+</div>
 
 ## Deploying the bot
 
