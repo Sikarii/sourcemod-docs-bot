@@ -34,7 +34,7 @@ export const buildSymbolEmbed = (symbol: DocSymbol) => {
   const embed = new MessageEmbed();
 
   const identifier = symbol.identifier.replaceAll("_", " ");
-  const descriptionIfAvailable = symbol.docs?.brief ?? "";
+  const description = symbol.docs?.brief ?? "";
 
   embed.setColor("#5865F2");
   embed.setTitle(`${symbol.name} (${identifier})`);
@@ -45,7 +45,7 @@ export const buildSymbolEmbed = (symbol: DocSymbol) => {
   embed.description += `[sourcemod.dev documentation](${getSymbolSmDevDocsLink(symbol)})\n\n`;
 
   embed.description += `${formatSymbol(symbol)}\n\n`;
-  embed.description += descriptionIfAvailable;
+  embed.description += description;
 
   return embed;
 };

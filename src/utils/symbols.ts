@@ -15,7 +15,8 @@ import {
   MAX_ENUM_MEMBERS,
   MAX_TYPESET_DEFS,
   MAX_METHODMAP_METHODS,
-  MAX_METHODMAP_PROPERTIES
+  MAX_METHODMAP_PROPERTIES,
+  MAX_FUNCTION_ARGS_INLINE
 } from "../constants";
 
 import { buildCode, buildCodeBlock } from "./index";
@@ -73,12 +74,10 @@ export const limitEntries = (arr: string[], limit: number, symbol: DocSymbol) =>
   ];
 };
 
-export const formatFunctionArguments = (func: Function) => {
-  const decls = func.arguments.map((a) => {
+export const formatFunctionDecls = (func: Function) => {
+  return func.arguments.map((a) => {
     return !a.default ? a.decl : `${a.decl} = ${a.default}`;
   });
-
-  return decls.join(", ");
 };
 
 export const formatTypeSet = (typeset: TypeSet & DocSymbol) => {
@@ -93,7 +92,12 @@ export const formatTypeDef = (typedef: Type) => {
 };
 
 export const formatFunction = (func: Function) => {
-  const args = formatFunctionArguments(func);
+  const decls = formatFunctionDecls(func);
+
+  const args = func.arguments.length < MAX_FUNCTION_ARGS_INLINE
+    ? decls.join(", ")
+    : `\n\t${decls.join(", \n\t")}\n`;
+
   return buildCodeBlock("c", `${func.kind} ${func.returnType} ${func.name}(${args})`);
 };
 
