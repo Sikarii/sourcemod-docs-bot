@@ -76,8 +76,8 @@ class CommandsManager {
   public async loadFromDisk(directory: string) {
     const files = await fs.promises.readdir(directory);
 
-    files.forEach((file) => {
-      const mod = require(`${directory}/${file}`);
+    files.forEach(async (file) => {
+      const mod = await import(`${directory}/${file}`);
 
       const commandName = path.parse(file).name;
       const commandData = mod.default as CommandDefinition;
