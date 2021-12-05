@@ -3,7 +3,7 @@
 A Discord bot that provides documentation hints for the SourceMod API.
 
 <div align="center">
-  <img src="https://i.imgur.com/SANmyPp.png" width="350" height="350" />
+  <img src="https://i.imgur.com/Y5HOjpk.png" width="350" height="350" />
   <img src="https://i.imgur.com/4B9WHp5.png" width="350" height="350" />
 </div>
 

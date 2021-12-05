@@ -94,7 +94,7 @@ export const formatTypeDef = (typedef: Type) => {
 export const formatFunction = (func: Function) => {
   const decls = formatFunctionDecls(func);
 
-  const args = func.arguments.length < MAX_FUNCTION_ARGS_INLINE
+  const args = func.arguments.length <= MAX_FUNCTION_ARGS_INLINE
     ? decls.join(", ")
     : `\n\t${decls.join(", \n\t")}\n`;
 
