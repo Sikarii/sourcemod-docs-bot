@@ -13,6 +13,11 @@ export const debounce = (timeout: number, func: (...args: any[]) => unknown) => 
   };
 };
 
+export const buildCode = (input: string) => {
+  const clean = Util.escapeInlineCode(input);
+  return `\`${clean}\``;
+};
+
 export const buildCodeBlock = (language: string, input: string) => {
   const clean = Util.escapeCodeBlock(input);
   return `\`\`\`${language}\n${clean}\`\`\``;
