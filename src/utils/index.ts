@@ -1,5 +1,4 @@
 import { Util } from "discord.js";
-
 import { CommandDefinition } from "../types/CommandDefinition";
 
 export const defineCommand = (command: CommandDefinition) => command;

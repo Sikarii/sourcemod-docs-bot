@@ -15,6 +15,9 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
+    "semi": "error",
+    "eol-last": "error",
+    "no-trailing-spaces": "error",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off"
