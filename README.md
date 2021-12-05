@@ -3,9 +3,13 @@
 A Discord bot that provides documentation hints for the SourceMod API.
 
 <div align="center">
-  <img src="https://i.imgur.com/Y5HOjpk.png" width="350" height="350" />
-  <img src="https://i.imgur.com/4B9WHp5.png" width="350" height="350" />
+  <img src="https://i.imgur.com/Y5HOjpk.png" width="400" height="450" />
+  <img src="https://i.imgur.com/4B9WHp5.png" width="400" height="450" />
 </div>
+
+## Commands
+- `/docs <query>` - Displays symbol information.
+- `/reload-symbols` - Owner only command to reload symbols.
 
 ## Deploying the bot
 
@@ -22,6 +26,13 @@ A Discord bot that provides documentation hints for the SourceMod API.
 ### Deploying using Docker (Compose)
 1. Copy `docker-compose.yml.example` to `docker-compose.yml`.
 2. Run `docker-compose up -d` to start the bot in the background.
+
+## Development
+1. Clone the repository with `git clone https://github.com/Sikarii/sourcemod-docs-bot`.
+2. Navigate to the cloned repository with `cd sourcemod-docs-bot`.
+3. Copy `.env.example` to `.env` and fill environment variables.
+4. Run `npm run deploy:dev` to deploy slash commands to the dev guild.
+5. Run `npm run dev` to run the bot in development mode (restarts on changes).
 
 ## Acknowledgments
 
