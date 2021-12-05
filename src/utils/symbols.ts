@@ -108,7 +108,7 @@ export const formatEnumeration = (enumeration: Enumeration & DocSymbol) => {
 };
 
 export const formatMethodMap = (methodmap: MethodMap & DocSymbol) => {
-  let header = !methodmap.name
+  let header = !methodmap.parent
     ? buildCode(methodmap.name)
     : buildCode(`${methodmap.name} < ${methodmap.parent}`);
 
