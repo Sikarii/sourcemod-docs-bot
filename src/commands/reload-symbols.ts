@@ -2,7 +2,6 @@ import { CommandPermission } from "../types/CommandPermission";
 
 import {
   defineCommand,
-  fetchManifest,
   buildErrorEmbed,
   buildSuccessEmbed
 } from "../utils";
@@ -16,8 +15,10 @@ export default defineCommand({
     await interaction.deferReply({ ephemeral: true });
 
     try {
-      const includes = await fetchManifest(true);
-      const loadedCount = symbolsManager.setFromManifestIncludes(includes);
+      symbolsManager.removeAll();
+      await symbolsManager.loadFromManifestBundle("core");
+
+      const loadedCount = symbolsManager.getCount();
 
       return interaction.editReply({
         embeds: [

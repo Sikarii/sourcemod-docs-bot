@@ -1,6 +1,4 @@
-import axios from "axios";
 import { Util } from "discord.js";
-
 import { CommandDefinition } from "../types/CommandDefinition";
 
 export const defineCommand = (command: CommandDefinition) => command;
@@ -14,27 +12,14 @@ export const debounce = (timeout: number, func: (...args: any[]) => unknown) => 
   };
 };
 
+export const buildCode = (input: string) => {
+  const clean = Util.escapeInlineCode(input);
+  return `\`${clean}\``;
+};
+
 export const buildCodeBlock = (language: string, input: string) => {
   const clean = Util.escapeCodeBlock(input);
   return `\`\`\`${language}\n${clean}\`\`\``;
-};
-
-export const capitalizeString = (str: string) => {
-  const [first, ...rest] = str;
-  return first.toUpperCase() + rest.join("");
-};
-
-export const fetchAsJson = async (url: string) => {
-  try {
-    const response = await axios.get(url);
-    if (response.status !== 200) {
-      return undefined;
-    }
-
-    return response.data;
-  } catch (e) {
-    return undefined;
-  }
 };
 
 export * from "./embeds";

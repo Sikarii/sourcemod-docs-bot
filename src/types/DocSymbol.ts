@@ -1,7 +1,5 @@
 import { Symbol, Identifier } from "./sp-gid-typings";
-
-export type IncludeSection = Record<SectionKey, DocSymbol[]>;
-export type ManifestIncludes = Record<string, IncludeSection>;
+import { ManifestBundleSectionKey } from "../datasources/manifest-bundle";
 
 export type DocSymbol = Symbol & {
   include: string;
@@ -19,14 +17,17 @@ export const SINGLETON_SECTIONS = {
   "typesets": Identifier.TypeSet,
 } as const;
 
-export type SectionKey = keyof typeof SINGLETON_SECTIONS;
-export type SingletonIdentifier = typeof SINGLETON_SECTIONS[SectionKey];
+export type SingletonIdentifier = typeof SINGLETON_SECTIONS[ManifestBundleSectionKey];
 
-export const sectionKeyToTag = (key: string): SingletonIdentifier | undefined => {
-  return SINGLETON_SECTIONS[key as any as SectionKey];
+export const isValidSection = (key: string): key is ManifestBundleSectionKey => {
+  return SINGLETON_SECTIONS[key as ManifestBundleSectionKey] !== undefined;
 };
 
-export const nestedToSingleton = (key: Identifier): SingletonIdentifier | undefined => {
+export const sectionKeyToTag = (key: ManifestBundleSectionKey): SingletonIdentifier => {
+  return SINGLETON_SECTIONS[key];
+};
+
+export const nestedToSingleton = (key: Identifier): SingletonIdentifier => {
   const mapping = {
     [Identifier.EnumStructField]: Identifier.Field,
     [Identifier.EnumStructMethod]: Identifier.Function,
@@ -35,5 +36,5 @@ export const nestedToSingleton = (key: Identifier): SingletonIdentifier | undefi
   };
 
   // TODO: Quite hacky
-  return (mapping as any)[key];
+  return (mapping as any)[key] ?? key;
 };
