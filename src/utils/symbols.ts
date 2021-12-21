@@ -2,6 +2,7 @@ import { DocSymbol } from "../types/DocSymbol";
 
 import {
   Type,
+  Entry,
   TypeSet,
   Function,
   MethodMap,
@@ -74,6 +75,11 @@ export const limitEntries = (arr: string[], limit: number, symbol: DocSymbol) =>
   ];
 };
 
+export const formatEntry = (entry: Entry) => {
+  const header = !entry.docs ? "\n" : `\n${entry.docs.brief}\n`;
+  return header + buildCode(entry.name);
+};
+
 export const formatFunctionDecls = (func: Function) => {
   return func.arguments.map((a) => {
     return !a.default ? a.decl : `${a.decl} = ${a.default}`;
@@ -102,7 +108,7 @@ export const formatFunction = (func: Function) => {
 };
 
 export const formatEnumeration = (enumeration: Enumeration & DocSymbol) => {
-  const names = enumeration.entries.map((e) => buildCode(e.name));
+  const names = enumeration.entries.map((e) => formatEntry(e));
   const lines = limitEntries(names, MAX_ENUM_MEMBERS, enumeration);
   return lines.join("\n");
 };
