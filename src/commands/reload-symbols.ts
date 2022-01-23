@@ -14,21 +14,15 @@ export default defineCommand({
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
 
-    try {
-      symbolsManager.removeAll();
-      await symbolsManager.loadFromManifestBundle("core");
-
-      const loadedCount = symbolsManager.getCount();
-
-      return interaction.editReply({
-        embeds: [
-          buildSuccessEmbed(`Successfully loaded ${loadedCount} symbols`),
-        ],
-      });
-    } catch (e) {
+    const success = await symbolsManager.loadRemote("core");
+    if (!success) {
       return interaction.editReply({
         embeds: [buildErrorEmbed("Failed to reload symbols")],
       });
     }
+
+    return interaction.editReply({
+      embeds: [buildSuccessEmbed("Successfully loaded symbols")],
+    });
   },
 });

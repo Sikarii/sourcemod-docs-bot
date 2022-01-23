@@ -2,15 +2,8 @@ import { Client, CommandInteraction, AutocompleteInteraction } from "discord.js"
 
 import { CommandPermission } from "./types/CommandPermission";
 
-import {
-  debounce,
-  buildErrorEmbed,
-  getSymbolDisplay,
-  getSymbolFullName,
-  getSymbolsForQuery
-} from "./utils";
-
 import { COMMANDS_DIRECTORY } from "./constants";
+import { buildErrorEmbed, getSymbolsForQuery } from "./utils";
 
 import config from "./config";
 import logger from "./logger";
@@ -21,8 +14,6 @@ import commandsManager from "./managers/commands";
 const client = new Client({
   intents: ["GUILDS", "GUILD_INTEGRATIONS"],
 });
-
-commandsManager.loadFromDisk(COMMANDS_DIRECTORY);
 
 const handleCommandInteraction = async (interaction: CommandInteraction) => {
   const command = commandsManager.get(interaction.commandName);
@@ -73,14 +64,7 @@ const handleAutocompleteInteraction = async (interaction: AutocompleteInteractio
   const option = interaction.options.getFocused();
 
   const query = option.toString();
-  const symbols = symbolsManager.getAll();
-
-  const matches = getSymbolsForQuery(query, symbols);
-
-  const results = matches.map((s) => ({
-    name: getSymbolDisplay(s),
-    value: getSymbolFullName(s),
-  }));
+  const results = await getSymbolsForQuery(query);
 
   return interaction.respond(results);
 };
@@ -98,26 +82,21 @@ client.on("interactionCreate", (interaction) => {
 });
 
 (async function() {
-  await commandsManager.loadFromDisk(COMMANDS_DIRECTORY);
-
-  const setPresence = debounce(2000, () => {
-    const count = symbolsManager.getCount();
-
-    client.user?.setPresence({
-      activities: [{
-        type: "WATCHING",
-        name: `${count} symbols`
-      }]
-    });
-  });
-
-  symbolsManager.on("mutation", setPresence);
-
-  // TODO: Bot can start and not have symbols loaded
   client.once("ready", () => {
-    console.log("Bot ready");
-    symbolsManager.loadFromManifestBundle("core");
+    client?.user?.setPresence({
+      activities: [
+        {
+          type: "PLAYING",
+          name: "SourceMod /docs"
+        }
+      ]
+    });
+
+    console.log(`Logged in as ${client.user?.tag}`);
   });
+
+  await symbolsManager.loadRemote("core");
+  await commandsManager.loadFromDisk(COMMANDS_DIRECTORY);
 
   await client.login(config.token);
 })();
