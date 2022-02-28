@@ -14,15 +14,18 @@ export default defineCommand({
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
 
-    const success = await symbolsManager.loadRemote("core");
-    if (!success) {
+    try {
+      await symbolsManager.loadRemote("core");
+
+      return interaction.editReply({
+        embeds: [buildSuccessEmbed("Successfully loaded symbols")],
+      });
+    } catch (err) {
+      console.error("Failed reloading symbols", err);
+
       return interaction.editReply({
         embeds: [buildErrorEmbed("Failed to reload symbols")],
       });
     }
-
-    return interaction.editReply({
-      embeds: [buildSuccessEmbed("Successfully loaded symbols")],
-    });
   },
 });

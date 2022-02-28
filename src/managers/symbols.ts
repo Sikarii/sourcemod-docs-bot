@@ -33,19 +33,10 @@ export class Symbols extends EventEmitter {
   async loadRemote(bundleName: string) {
     const bundleUrl = `${MANIFEST_REMOTE_BASE_URL}/${encodeURI(bundleName)}.bundle`;
 
-    const response = await axios.get<IBundle>(bundleUrl, {
-      timeout: 30000,
-      validateStatus: () => true
-    });
-
-    if (response.status >= 400) {
-      return false;
-    }
-
+    const response = await axios.get<IBundle>(bundleUrl);
     const bundle = new Bundle(response.data);
 
     this.bundles.set(bundleName, bundle);
-    return true;
   }
 }
 
