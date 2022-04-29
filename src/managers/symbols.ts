@@ -13,6 +13,10 @@ export class Symbols extends EventEmitter {
   }
 
   get(bundleName: string, path: string[]) {
+    if (!path || path.length <= 0) {
+      return undefined;
+    }
+
     const bundle = this.bundles.get(bundleName);
     if (!bundle) {
       return undefined;
