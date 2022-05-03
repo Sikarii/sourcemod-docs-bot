@@ -32,14 +32,9 @@ export default defineCommand({
     const query = interaction.options.getString("query", true);
     const target = interaction.options.getUser("target", false);
 
-    // sourcemod/function/OnPluginStart
-    // sourcemod/methodmap_method/GameData.GetAddress
-    const [include, ...querySegments] = query.split("/");
+    const path = query.split("/");
+    const symbol = symbolsManager.get("core", path);
 
-    const symbolType = querySegments[0] ?? "";
-    const symbolName = querySegments[1] ?? "";
-
-    const symbol = symbolsManager.get(symbolName, include, symbolType);
     if (!symbol) {
       return interaction.reply({
         ephemeral: true,
@@ -47,7 +42,7 @@ export default defineCommand({
       });
     }
 
-    const embed = buildSymbolEmbed(symbol);
+    const embed = buildSymbolEmbed(symbol, path);
 
     return interaction.reply({
       embeds: [embed],

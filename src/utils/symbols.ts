@@ -1,14 +1,17 @@
-import { DocSymbol } from "../types/DocSymbol";
-
 import {
-  Type,
+  Part,
+  IType,
   Entry,
   TypeSet,
   Function,
   MethodMap,
   Identifier,
   Enumeration,
-} from "../types/sp-gid-typings";
+  TypeDefinition,
+  ClassSymbol,
+  splitPath,
+  normalizeIdentifier
+} from "@sourcemod-dev/schema";
 
 import {
   AM_DOCS_URL,
@@ -22,44 +25,55 @@ import {
 
 import { buildCode, buildCodeBlock } from "./index";
 
-export const getSymbolDisplay = (s: DocSymbol) => {
-  return `${s.include} :: ${s.identifier} :: ${s.name}`;
+import symbolsManager from "../managers/symbols";
+
+export const getSymbolPath = (path: string[]) => {
+  return path.slice(0, 3).join("/");
 };
 
-export const getSymbolFullName = (s: DocSymbol) => {
-  return `${s.include}/${s.identifier}/${s.name}`;
+export const getSymbolName = (path: string[]) => {
+  const segments = path.slice(1, 3).map((p) => {
+    const info = splitPath(p);
+    return info.name;
+  });
+
+  return segments.join(".");
 };
 
-export const getSymbolAmDocsLink = (s: DocSymbol) => {
-  const [parentName, childName = ""] = s.name.split(".");
-  const [, childType = ""] = s.identifier.split("_");
+export const getSymbolDisplay = (identifier: Identifier, path: string[]) => {
+  const include = path[0];
+  const symbolName = getSymbolName(path);
 
-  return !childType || !childName
-    ? `${AM_DOCS_URL}/${s.include}/${parentName}`
-    : `${AM_DOCS_URL}/${s.include}/${parentName}/${childName}`;
+  return `${include} :: ${identifier} :: ${symbolName}`;
 };
 
-export const getSymbolSmDevDocsLink = (s: DocSymbol) => {
-  const [parentName, childName = ""] = s.name.split(".");
-  const [parentType, childType = ""] = s.identifier.split("_");
+export const getSymbolAmDocsLink = (path: string[]) => {
+  const [include, ...rest] = path;
 
-  return !childType || !childName
-    ? `${SM_DEV_DOCS_URL}/${s.include}/${parentType}.${parentName}`
-    : `${SM_DEV_DOCS_URL}/${s.include}/${parentType}.${parentName}/${childType}.${childName}`;
+  const segments = rest.map((s) => {
+    const info = splitPath(s);
+    return info.name;
+  });
+
+  return `${AM_DOCS_URL}/${include}/${segments.join("/")}`;
 };
 
-export const getSymbolsForQuery = (query: string, allSymbols: DocSymbol[]) => {
-  const lowerQuery = query.toLowerCase();
-
-  // Interactions are limited to 25 results
-  const results = allSymbols
-    .filter((s) => getSymbolFullName(s).toLowerCase().includes(lowerQuery))
-    .slice(0, 25);
-
-  return results;
+export const getSymbolSmDevDocsLink = (path: string[]) => {
+  return `${SM_DEV_DOCS_URL}/${path.join("/")}`;
 };
 
-export const limitEntries = (arr: string[], limit: number, symbol: DocSymbol) => {
+export const getSymbolsForQuery = async (query: string) => {
+  const results = await symbolsManager.search("core", query);
+  const relevant = results.filter((r) => r.part === Part.Name);
+  const truncated = relevant.slice(0, 25);
+
+  return truncated.map((s) => ({
+    name: getSymbolDisplay(s.identifier, s.path).slice(0, 100),
+    value: getSymbolPath(s.path).slice(0, 100),
+  }));
+};
+
+export const limitEntries = (arr: string[], limit: number, path: string[]) => {
   if (arr.length <= limit) {
     return arr;
   }
@@ -70,8 +84,8 @@ export const limitEntries = (arr: string[], limit: number, symbol: DocSymbol) =>
   return [
     ...clampedArr,
     `\n**${remaining} more entries** can be viewed on:`,
-    `[AlliedModders documentation](${getSymbolAmDocsLink(symbol)})`,
-    `[sourcemod.dev documentation](${getSymbolSmDevDocsLink(symbol)})`,
+    `[AlliedModders documentation](${getSymbolAmDocsLink(path)})`,
+    `[sourcemod.dev documentation](${getSymbolSmDevDocsLink(path)})`,
   ];
 };
 
@@ -86,13 +100,15 @@ export const formatFunctionDecls = (func: Function) => {
   });
 };
 
-export const formatTypeSet = (typeset: TypeSet & DocSymbol) => {
-  const defs = typeset.types.map((t) => formatTypeDef(t));
-  const lines = limitEntries(defs, MAX_TYPESET_DEFS, typeset);
+export const formatTypeSet = (typeset: TypeSet, path: string[]) => {
+  const types = Object.values(typeset.types);
+  const formatted = types.map((t) => formatTypeDef(t));
+
+  const lines = limitEntries(formatted, MAX_TYPESET_DEFS, path);
   return lines.join("\n");
 };
 
-export const formatTypeDef = (typedef: Type) => {
+export const formatTypeDef = (typedef: IType) => {
   const header = !typedef.docs ? "" : `${typedef.docs.brief}\n`;
   return header + buildCodeBlock("c", typedef.type);
 };
@@ -107,27 +123,29 @@ export const formatFunction = (func: Function) => {
   return buildCodeBlock("c", `${func.kind} ${func.returnType} ${func.name}(${args})`);
 };
 
-export const formatEnumeration = (enumeration: Enumeration & DocSymbol) => {
-  const names = enumeration.entries.map((e) => formatEntry(e));
-  const lines = limitEntries(names, MAX_ENUM_MEMBERS, enumeration);
+export const formatEnumeration = (enumeration: Enumeration, path: string[]) => {
+  const entries = Object.values(enumeration.entries);
+  const formatted = entries.map((e) => formatEntry(e));
+
+  const lines = limitEntries(formatted, MAX_ENUM_MEMBERS, path);
   return lines.join("\n");
 };
 
-export const formatMethodMap = (methodmap: MethodMap & DocSymbol) => {
+export const formatMethodMap = (methodmap: MethodMap, path: string[]) => {
   let header = !methodmap.parent
     ? buildCode(methodmap.name)
     : buildCode(`${methodmap.name} < ${methodmap.parent}`);
 
-  // A constructor is present if a method is equal to the symbol's name
-  const constructor = methodmap.methods.find((m) => m.name === methodmap.name);
+  const constructor = methodmap.methods[methodmap.name];
   if (constructor) {
     header += "\n" + formatFunction(constructor);
   }
 
-  const availableMethods = methodmap.methods.filter((m) => m.name !== constructor?.name);
+  const allMethods = Object.values(methodmap.methods);
+  const allProperties = Object.values(methodmap.properties);
 
-  const methods = availableMethods.map((m) => `Function: ${buildCode(m.name)}`);
-  const properties = methodmap.properties.map((m) => `Property: ${buildCode(m.name)}`);
+  const methods = allMethods.map((m) => `Function: ${buildCode(m.name)}`);
+  const properties = allProperties.map((m) => `Property: ${buildCode(m.name)}`);
 
   const maxEntries = MAX_METHODMAP_METHODS + MAX_METHODMAP_PROPERTIES;
 
@@ -141,26 +159,28 @@ export const formatMethodMap = (methodmap: MethodMap & DocSymbol) => {
     ...properties.slice(propertiesAmt),
   ];
 
-  const lines = limitEntries(members, maxEntries, methodmap);
+  const lines = limitEntries(members, maxEntries, path);
   return header + "\n\n" + lines.join("\n");
 };
 
-export const formatSymbol = (symbol: DocSymbol) => {
-  switch (symbol.tag) {
+export const formatSymbol = (symbol: ClassSymbol, path: string[]) => {
+  const normalizedIdentifier = normalizeIdentifier(symbol.identifier);
+
+  switch (normalizedIdentifier) {
     case Identifier.TypeSet:
-      return formatTypeSet(symbol);
+      return formatTypeSet(symbol as TypeSet, path);
 
     case Identifier.TypeDefinition:
-      return formatTypeDef(symbol);
+      return formatTypeDef(symbol as TypeDefinition);
 
     case Identifier.Function:
-      return formatFunction(symbol);
+      return formatFunction(symbol as Function);
 
     case Identifier.Enumeration:
-      return formatEnumeration(symbol);
+      return formatEnumeration(symbol as Enumeration, path);
 
     case Identifier.MethodMap:
-      return formatMethodMap(symbol);
+      return formatMethodMap(symbol as MethodMap, path);
 
     default:
       return buildCode(symbol.name);
