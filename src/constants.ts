@@ -12,6 +12,8 @@ export const SM_DEV_DOCS_URL = "https://sourcemod.dev/#";
 
 export const SYMBOLS_SOURCE_URL = "https://github.com/sourcemod-dev/manifest";
 
+export const MAX_SEARCH_RESULTS = 25;
+
 export const MAX_ENUM_MEMBERS = 5;
 export const MAX_TYPESET_DEFS = 3;
 
