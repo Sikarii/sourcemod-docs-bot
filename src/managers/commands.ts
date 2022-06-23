@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 
+import { MaybePromise } from "../types/MaybePromise";
 import { CommandDefinition } from "../types/CommandDefinition";
 import { CommandPermission } from "../types/CommandPermission";
 
@@ -11,14 +12,14 @@ export class Command {
   public readonly description: string;
   public readonly permission: CommandPermission;
   public readonly options: ApplicationCommandOptionData[];
-  public readonly execute: (interaction: CommandInteraction) => any | Promise<any>;
+  public readonly execute: (interaction: CommandInteraction) => MaybePromise<unknown>;
 
   constructor(
-    name: string,
-    description: string,
-    permission: CommandPermission,
-    options: ApplicationCommandOptionData[],
-    handler: (interaction: CommandInteraction) => any | Promise<any>
+    name: Command["name"],
+    description: Command["description"],
+    permission: Command["permission"],
+    options: Command["options"],
+    handler: Command["execute"],
   ) {
     this.name = name;
     this.description = description;
@@ -91,7 +92,7 @@ class CommandsManager {
         commandData.description,
         commandData.permission,
         commandData.options ?? [],
-        commandData.execute
+        commandData.execute,
       );
 
       return this.add(command);

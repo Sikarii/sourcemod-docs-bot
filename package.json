@@ -7,6 +7,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
+    "lint": "eslint src",
     "build": "tsc",
     "start": "tsc && node dist/index.js",
     "deploy:dev": "ts-node src/deploy/dev.ts",

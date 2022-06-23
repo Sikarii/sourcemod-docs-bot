@@ -3,7 +3,7 @@ import { CommandPermission } from "../types/CommandPermission";
 import {
   defineCommand,
   buildErrorEmbed,
-  buildSuccessEmbed
+  buildSuccessEmbed,
 } from "../utils";
 
 import symbolsManager from "../managers/symbols";

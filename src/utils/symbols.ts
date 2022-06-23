@@ -1,3 +1,6 @@
+// Some of the sourcemod-dev schema types conflict, i.e. Function
+/* eslint @typescript-eslint/ban-types: off */
+
 import {
   Part,
   IType,
@@ -10,7 +13,7 @@ import {
   TypeDefinition,
   ClassSymbol,
   splitPath,
-  normalizeIdentifier
+  normalizeIdentifier,
 } from "@sourcemod-dev/schema";
 
 import {
@@ -20,7 +23,7 @@ import {
   MAX_TYPESET_DEFS,
   MAX_METHODMAP_METHODS,
   MAX_METHODMAP_PROPERTIES,
-  MAX_FUNCTION_ARGS_INLINE
+  MAX_FUNCTION_ARGS_INLINE,
 } from "../constants";
 
 import { buildCode, buildCodeBlock } from "./index";
@@ -167,22 +170,22 @@ export const formatSymbol = (symbol: ClassSymbol, path: string[]) => {
   const normalizedIdentifier = normalizeIdentifier(symbol.identifier);
 
   switch (normalizedIdentifier) {
-    case Identifier.TypeSet:
-      return formatTypeSet(symbol as TypeSet, path);
+  case Identifier.TypeSet:
+    return formatTypeSet(symbol as TypeSet, path);
 
-    case Identifier.TypeDefinition:
-      return formatTypeDef(symbol as TypeDefinition);
+  case Identifier.TypeDefinition:
+    return formatTypeDef(symbol as TypeDefinition);
 
-    case Identifier.Function:
-      return formatFunction(symbol as Function);
+  case Identifier.Function:
+    return formatFunction(symbol as Function);
 
-    case Identifier.Enumeration:
-      return formatEnumeration(symbol as Enumeration, path);
+  case Identifier.Enumeration:
+    return formatEnumeration(symbol as Enumeration, path);
 
-    case Identifier.MethodMap:
-      return formatMethodMap(symbol as MethodMap, path);
+  case Identifier.MethodMap:
+    return formatMethodMap(symbol as MethodMap, path);
 
-    default:
-      return buildCode(symbol.name);
+  default:
+    return buildCode(symbol.name);
   }
 };
