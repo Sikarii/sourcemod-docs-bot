@@ -2,7 +2,7 @@
   "name": "sourcemod-docs-bot",
   "author": "Sikari",
   "license": "MIT",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Documentation bot for SourceMod",
   "main": "dist/index.js",
   "scripts": {
