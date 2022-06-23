@@ -175,22 +175,22 @@ export const formatSymbol = (symbol: ClassSymbol, path: string[]) => {
   const normalizedIdentifier = normalizeIdentifier(symbol.identifier);
 
   switch (normalizedIdentifier) {
-  case Identifier.TypeSet:
-    return formatTypeSet(symbol as TypeSet, path);
+    case Identifier.TypeSet:
+      return formatTypeSet(symbol as TypeSet, path);
 
-  case Identifier.TypeDefinition:
-    return formatTypeDef(symbol as TypeDefinition);
+    case Identifier.TypeDefinition:
+      return formatTypeDef(symbol as TypeDefinition);
 
-  case Identifier.Function:
-    return formatFunction(symbol as Function);
+    case Identifier.Function:
+      return formatFunction(symbol as Function);
 
-  case Identifier.Enumeration:
-    return formatEnumeration(symbol as Enumeration, path);
+    case Identifier.Enumeration:
+      return formatEnumeration(symbol as Enumeration, path);
 
-  case Identifier.MethodMap:
-    return formatMethodMap(symbol as MethodMap, path);
+    case Identifier.MethodMap:
+      return formatMethodMap(symbol as MethodMap, path);
 
-  default:
-    return buildCode(symbol.name);
+    default:
+      return buildCode(symbol.name);
   }
 };
