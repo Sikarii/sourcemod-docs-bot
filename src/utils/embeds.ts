@@ -5,7 +5,7 @@ import {
   formatSymbol,
   getSymbolName,
   getSymbolAmDocsLink,
-  getSymbolSmDevDocsLink
+  getSymbolSmDevDocsLink,
 } from "./symbols";
 
 import { SYMBOLS_SOURCE_URL } from "../constants";

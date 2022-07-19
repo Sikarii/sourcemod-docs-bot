@@ -87,9 +87,9 @@ client.on("interactionCreate", (interaction) => {
       activities: [
         {
           type: "PLAYING",
-          name: "SourceMod /docs"
-        }
-      ]
+          name: "SourceMod /docs",
+        },
+      ],
     });
 
     console.log(`Logged in as ${client.user?.tag}`);

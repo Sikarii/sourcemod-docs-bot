@@ -2,7 +2,7 @@ import axios from "axios";
 
 import {
   COMMANDS_DIRECTORY,
-  DAPI_APPLICATIONS_URL
+  DAPI_APPLICATIONS_URL,
 } from "../constants";
 
 import config from "../config";
@@ -27,8 +27,11 @@ export const deploy = async ({ prodDeploy = false }) => {
 
     console.info("Successfully updated slash commands");
     console.info(response.data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failure while updating slash commands");
-    console.error(JSON.stringify(error.response.data.errors));
+
+    if (axios.isAxiosError(error) && error.response) {
+      console.error(JSON.stringify(error.response.data.errors));
+    }
   }
 };

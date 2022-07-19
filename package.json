@@ -2,11 +2,12 @@
   "name": "sourcemod-docs-bot",
   "author": "Sikari",
   "license": "MIT",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Documentation bot for SourceMod",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
+    "lint": "eslint src",
     "build": "tsc",
     "start": "tsc && node dist/index.js",
     "deploy:dev": "ts-node src/deploy/dev.ts",

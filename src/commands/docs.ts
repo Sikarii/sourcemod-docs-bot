@@ -5,7 +5,7 @@ import { CommandPermission } from "../types/CommandPermission";
 import {
   defineCommand,
   buildErrorEmbed,
-  buildSymbolEmbed
+  buildSymbolEmbed,
 } from "../utils";
 
 import symbolsManager from "../managers/symbols";
@@ -48,7 +48,7 @@ export default defineCommand({
       embeds: [embed],
       content: !target
         ? undefined
-        : `Documentation suggestion for ${target}:`
+        : `Documentation suggestion for ${target}:`,
     });
   },
 });

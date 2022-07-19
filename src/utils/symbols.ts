@@ -1,3 +1,6 @@
+// Some of the sourcemod-dev schema types conflict, i.e. Function
+/* eslint @typescript-eslint/ban-types: off */
+
 import {
   Part,
   IType,
@@ -10,7 +13,7 @@ import {
   TypeDefinition,
   ClassSymbol,
   splitPath,
-  normalizeIdentifier
+  normalizeIdentifier,
 } from "@sourcemod-dev/schema";
 
 import {
@@ -20,7 +23,8 @@ import {
   MAX_TYPESET_DEFS,
   MAX_METHODMAP_METHODS,
   MAX_METHODMAP_PROPERTIES,
-  MAX_FUNCTION_ARGS_INLINE
+  MAX_FUNCTION_ARGS_INLINE,
+  MAX_SEARCH_RESULTS,
 } from "../constants";
 
 import { buildCode, buildCodeBlock } from "./index";
@@ -64,8 +68,12 @@ export const getSymbolSmDevDocsLink = (path: string[]) => {
 
 export const getSymbolsForQuery = async (query: string) => {
   const results = await symbolsManager.search("core", query);
-  const relevant = results.filter((r) => r.part === Part.Name);
-  const truncated = relevant.slice(0, 25);
+
+  const relevant = results
+    .filter((r) => r.part === Part.Name)
+    .sort((a, b) => b.score - a.score);
+
+  const truncated = relevant.slice(0, MAX_SEARCH_RESULTS);
 
   return truncated.map((s) => ({
     name: getSymbolDisplay(s.identifier, s.path).slice(0, 100),

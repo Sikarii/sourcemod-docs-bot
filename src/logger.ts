@@ -16,7 +16,7 @@ const webhookClient = new WebhookClient({ url: config.loggingWebhookUrl ?? "" })
 interface LogOptions {
   type: string;
   message: string;
-  context?: any;
+  context?: unknown;
   invoker?: User;
 }
 
@@ -96,7 +96,11 @@ export class Logger {
     });
   }
 
-  private errorToJson(error: any) {
+  private errorToJson(error: unknown) {
+    if (!(error instanceof Error)) {
+      return {};
+    }
+
     return {
       name: error.name,
       message: error.message,
